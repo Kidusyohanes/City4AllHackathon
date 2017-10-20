@@ -6,8 +6,10 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def main():
-    '''
+
+def main(field):
+
+    ''' 
     Append selected demographic data to the origin database
     '''
 
@@ -15,11 +17,13 @@ def main():
     dem_fn = 'data/nhgis0002_csv/nhgis0002_ds172_2010_block.csv'
     db_fn =  'sea_5km_orig.db'
 
+    # for x in range(0,len(fields)):
+
     # specify the attributes
     attr = {
-            'field' :'people_of_color', #'pop_above_65', 'pop_over_65', 'female','pop_below_10','people_of_color'
+            'field' : field[0], #'pop_above_65', 'pop_over_65', 'female','pop_below_10','people_of_color'
             'census_code' : 'H7V001',
-            'custom' : True
+            'custom' : field[1]
             }
 
     # connect to database
@@ -96,8 +100,8 @@ def CalculateDemographic(df, attr):
     # consider population below 10 
     elif var_name == 'pop_below_10':
         # conside people of color 
-        census_codes = ['H76002','H76003','H76004',
-                        'H76026','H76027','H76028'] 
+        census_codes = ['H76003','H76004',
+                        'H76027','H76028'] 
         df[var_name] = df[census_codes].sum(1)
     # consider female population 
     elif var_name == 'female':
@@ -135,10 +139,11 @@ def WriteDB(df, db, attr):
 
     logger.info('Complete')
 
-
+fields = [('pop',False), ('pop_over_65', True), ('female',True),('pop_below_10',True),('people_of_color',True)]
 
 if __name__ == "__main__":
-    main()
+    for field in fields:
+        main(field)
 
 
 
